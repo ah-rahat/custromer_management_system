@@ -5,15 +5,23 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Main;
 use App\Service;
+use App\About;
+use App\Protfolio;
 
 
 class PageController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index()
     {
         $mainData=Main::latest()->first();
         $servicesData=Service::all()->take(3);
-        return view('welcome',compact('mainData','servicesData'));
+        $profolioData=Protfolio::all();
+        $aboutdatas=About::all();
+        return view('welcome',compact('mainData','servicesData','profolioData','aboutdatas'));
     }
     public function dashboard()
     {
@@ -88,14 +96,68 @@ class PageController extends Controller
     }
     public function protfolio()
     {
+        $profolioData=Protfolio::all();
         return view('admin.protfolio');
+    }
+    public function protfolioStore(Request $request)
+    {
+              $request->validate([
+                  'image'=>'required',
+                  'title'=>'required',
+                  'sub_title'=>'required',
+                  'client'=>'required',
+                  'category'=>'required',
+                  'description'=>'required',
+              ]);
+              $protfolioStore=new Protfolio();
+              if($request->hasFile('image')){
+                  $filename=$request->image;
+                  $file_name=time().rand(1,999).'.'.$filename->getClientOriginalExtension();
+                  $filename->move(base_path('public/uploads/project_img'),$file_name);
+                  $protfolioStore->image=$file_name;
+              }
+              
+              $protfolioStore->title=$request->title;
+              $protfolioStore->sub_title=$request->sub_title;
+              $protfolioStore->client=$request->client;
+              $protfolioStore->category=$request->category;
+              $protfolioStore->description=$request->description;
+              $protfolioStore->save();
+              return redirect()->back()->with('addstatus','Data added successfully');
+
+
+    }
+   
+    public function about()
+    {
+        
+        return view('admin.about');
+    }
+    public function aboutStore(Request $request)
+    {
+        $request->validate([
+            'image'=>'required',
+            'year'=>'required',
+            'title'=>'required',
+            'description'=>'required',
+            
+        ]);
+        $aboutStore=new About();
+        if($request->hasFile('image')){
+            $filename=$request->image;
+            $file_name=time().rand(1,999).'.'.$filename->getClientOriginalExtension();
+            $filename->move(base_path('public/uploads/project_img'),$file_name);
+            $aboutStore->image=$file_name;
+        }
+        
+        $aboutStore->year=$request->year;
+        $aboutStore->title=$request->title;
+        $aboutStore->description=$request->description;
+        $aboutStore->save();
+        return redirect()->back()->with('addstatus','Data added successfully');
     }
     public function contact()
     {
         return view('admin.contact');
-    }
-    public function about()
-    {
-        return view('admin.about');
     }
 }

@@ -26,8 +26,11 @@ Route::get('/services/delete/{id}', 'PageController@servicesDelete')->name('serv
 Route::get('/services/edit/{id}', 'PageController@servicesEdit')->name('service.edit');
 Route::post('/services/update/{id}', 'PageController@servicesUpdate')->name('services.update');
 Route::get('/protfolio', 'PageController@protfolio')->name('admin.protfolio');
+Route::post('/protfolio/store', 'PageController@protfolioStore')->name('protfolio.store');
+
 Route::get('/contact', 'PageController@contact')->name('admin.contact');
 Route::get('/about', 'PageController@about')->name('admin.about');
+Route::post('/about/store', 'PageController@aboutStore')->name('about.store');
 
 ///////frontend controller////////
 Route::get('/','PageController@index');
